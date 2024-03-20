@@ -3,23 +3,19 @@ k in K
 x in Var
 a in A
 
+abop ::= + | - | * | / | mod
+
 e ::= n
     | (e)
     | x
-    | e + e
-    | e - e
-    | e * e
-    | e / e
-    | e mod e
+    | e abop e
+
+bbop ::= and | or | = | ≠ | < | > | ≤ | ≥
 
 b ::= true | false
     | (b)
-    | e = e
-    | e < e
-    | e > e
     | not b
-    | b and b
-    | b or b
+    | b bbop b
 
 act ::= τ | a(x) | 'a(e)
 
