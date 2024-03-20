@@ -1,16 +1,19 @@
+n in N
 k in K
 x in Var
 a in A
 
-e ::= k
+e ::= n
     | (e)
+    | x
     | e + e
     | e - e
     | e * e
     | e / e
     | e mod e
 
-b ::= (b)
+b ::= true | false
+    | (b)
     | e = e
     | e < e
     | e > e
@@ -18,27 +21,25 @@ b ::= (b)
     | b and b
     | b or b
 
-c ::= τ | a(x) | 'a(e)
+act ::= τ | a(x) | 'a(e)
 
-el ::= e | e, el
+params(t) ::= t | t, el
 
-L ::= a | a, L
+L ::= {params(a)}
 
-f ::= a/a | a/a, f
+f ::= params(a/a)
 
 P ::= 0
     | (P)
-    | c. P
+    | act. P
     | k
-    | k(el)
+    | k(params(e))
     | if b then P
     | P + P
     | P | P
     | P[f]
-    | P \ {L}
-
-vl ::= x | x, vl
+    | P \ L
 
 π ::= P
     | k = P; π
-    | k(vl) = P; π
+    | k(params(x)) = P; π
