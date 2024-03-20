@@ -28,14 +28,14 @@ f ::= a/a | a/a, f
 
 P ::= 0
     | (P)
+    | c. P
     | k
     | k(el)
-    | c. P
     | if b then P
     | P + P
     | P | P
-    | P \ {L}
     | P[f]
+    | P \ {L}
 
 vl ::= x | x, vl
 

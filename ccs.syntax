@@ -1,0 +1,20 @@
+k in K
+a in A
+
+c ::= τ | a | 'a
+
+L ::= a | a, L
+
+f ::= a/a | a/a, f
+
+P ::= 0
+    | (P)
+    | c. P
+    | k
+    | P + P
+    | P | P
+    | P[f]
+    | P \ {L}
+
+π ::= P
+    | k = P; π
