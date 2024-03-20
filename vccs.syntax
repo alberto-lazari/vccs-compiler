@@ -1,0 +1,44 @@
+k in K
+x in Var
+a in A
+
+e ::= k
+    | (e)
+    | e + e
+    | e - e
+    | e * e
+    | e / e
+    | e mod e
+
+b ::= (b)
+    | e = e
+    | e < e
+    | e > e
+    | not b
+    | b and b
+    | b or b
+
+c ::= τ | a(x) | 'a(e)
+
+el ::= e | e, el
+
+L ::= a | a, L
+
+f ::= a/a | a/a, f
+
+P ::= 0
+    | (P)
+    | k
+    | k(el)
+    | c. P
+    | if b then P
+    | P + P
+    | P | P
+    | P \ {L}
+    | P[f]
+
+vl ::= x | x, vl
+
+π ::= P
+    | k = P; π
+    | k(vl) = P; π
