@@ -10,26 +10,28 @@ e ::= n
     | x
     | e abop e
 
-bbop ::= and | or | = | ≠ | < | > | ≤ | ≥
+bbop ::= = | ≠ | < | > | ≤ | ≥
 
 b ::= true | false
     | (b)
     | not b
-    | b bbop b
+    | b and b
+    | b or b
+    | e bbop e
 
 act ::= τ | a(x) | 'a(e)
 
-params(t) ::= t | t, el
-
-L ::= {params(a)}
-
-f ::= params(a/a)
+args ::= e | e, args
+params ::= x | x, params
+channels ::= a | a, channels
+L ::= a | {channels}
+f ::= a/a | a/a, f
 
 P ::= 0
     | (P)
     | act. P
     | k
-    | k(params(e))
+    | k(args)
     | if b then P
     | P + P
     | P | P
@@ -38,4 +40,4 @@ P ::= 0
 
 π ::= P
     | k = P; π
-    | k(params(x)) = P; π
+    | k(params) = P; π

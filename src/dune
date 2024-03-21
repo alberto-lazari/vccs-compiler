@@ -1,0 +1,7 @@
+(library
+ (name vcc))
+
+(menhir
+ (modules parser))
+
+; (ocamllex lexer)

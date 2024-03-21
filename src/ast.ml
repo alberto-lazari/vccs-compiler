@@ -11,8 +11,6 @@ type expr =
   | AritBinop of abop * expr * expr
 
 type bbop =
-  | And
-  | Or
   | Eq
   | Neq
   | Lt
@@ -24,6 +22,8 @@ type boolean =
   | True
   | False
   | Not of boolean
+  | And of boolean * boolean
+  | Or of boolean * boolean
   | BoolBinop of bbop * boolean * boolean
 
 
@@ -42,6 +42,6 @@ type proc =
   | Red of proc * (string * string) list
   | Res of proc * string list
 
-type program =
+type prog =
   | Proc of proc
-  | Def of string * string list * proc * program
+  | Def of string * string list * proc * prog
