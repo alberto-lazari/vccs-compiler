@@ -1,0 +1,4 @@
+(executable
+ (name vcc)
+ (public_name vcc)
+ (libraries))

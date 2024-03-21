@@ -81,9 +81,9 @@ bbop:
   | GEQ { Geq }
 
 boolean:
+  | LPAREN b = boolean RPAREN { b }
   | TRUE { True }
   | FALSE { False }
-  | LPAREN b = boolean RPAREN { b }
   | NOT b = boolean { Not b }
   | b1 = boolean AND b2 = boolean { And (b1, b2) }
   | b1 = boolean OR b2 = boolean { Or (b1, b2) }
@@ -119,6 +119,7 @@ resL:
   | LBRACE chs = channels RBRACE { chs }
 
 proc:
+  | LPAREN p = proc RPAREN { p }
   | NIL { Nil }
   | a = act POINT p = proc { Act (a, p) }
   | k = ID { Const (k, []) }

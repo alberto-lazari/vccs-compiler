@@ -1,0 +1,16 @@
+opam-version: "2.0"
+name: "vccs-compiler"
+version: "0.1"
+synopsis: "Value-passing CCS to basic CSS compiler"
+description: """
+A compiler for the value-passing extension to Milner's Calculus of Communicating Systems (CCS).
+Compiles vCCS (value-passing CCS) code into basic CCS source files
+"""
+maintainer: "Alberto Lazari <alberto.lazari@gmail.com>"
+authors: "Alberto Lazari <alberto.lazari@gmail.com>"
+license: "MIT"
+homepage: "https://github.com/albertolazari/vccs-compiler"
+bug-reports: "https://github.com/albertolazari/vccs-compiler/issues"
+dev-repo: "git+https://github.com/albertolazari/vccs-compiler.git"
+depends: [ "ocaml" "ocamlfind" ]
+build: ["dune" "build"]
