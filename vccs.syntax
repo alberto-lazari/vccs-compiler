@@ -24,8 +24,8 @@ act ::= τ | a(x) | 'a(e)
 args ::= e | e, args
 params ::= x | x, params
 channels ::= a | a, channels
-L ::= a | {channels}
 f ::= a/a | a/a, f
+L ::= a | {channels}
 
 P ::= 0
     | (P)
