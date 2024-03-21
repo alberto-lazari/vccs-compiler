@@ -12,5 +12,5 @@ license: "MIT"
 homepage: "https://github.com/albertolazari/vccs-compiler"
 bug-reports: "https://github.com/albertolazari/vccs-compiler/issues"
 dev-repo: "git+https://github.com/albertolazari/vccs-compiler.git"
-depends: [ "ocaml" "ocamlfind" ]
+depends: [ "ocaml" "dune" "menhir" ]
 build: ["dune" "build"]
