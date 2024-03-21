@@ -2,6 +2,7 @@
 open Ast
 %}
 
+(* Tokens *)
 %token <int> INT
 %token <string> ID
 
@@ -21,6 +22,7 @@ open Ast
 %token TRUE FALSE
 %token NOT AND OR
 
+%token NIL
 %token TAU
 %token TICK
 %token POINT
@@ -34,7 +36,7 @@ open Ast
 %token EOF
 
 
-
+(* Association rules *)
 %nonassoc PIPE
 %right POINT
 
@@ -57,6 +59,16 @@ open Ast
 
 %start <Ast.prog> prog
 %%
+
+(* Syntax *)
+act:
+  | TAU { Tau }
+  | a = ID LPAREN x = ID RPAREN { Input (a, x) }
+  | TICK a = ID LPAREN e = expr RPAREN { Output (a, e) }
+
+proc:
+  | NIL { Nil }
+  | a = act POINT p = proc { Act (a, p) }
 
 prog:
   | p = proc EOF { Proc p }
