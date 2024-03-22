@@ -49,19 +49,19 @@ let pp_act out a = match a with
 
 let rec pp_proc out p = match p with
   | Nil -> fprintf out "O"
-  | Act (a, q) -> fprintf out "%a. %a"
+  | Act (a, p) -> fprintf out "%a. %a"
       pp_act a
-      pp_proc q
+      pp_proc p
   | Const (k, []) -> fprintf out "%s" k
-  | Const (k, el) -> fprintf out "@[<hov>%s(%a)@]" k
+  | Const (k, args) -> fprintf out "@[<hov>%s(%a)@]" k
       Format.(pp_print_list
         ~pp_sep: (fun out () -> fprintf out ",@ ")
         pp_expr
-      ) el
-  | If (b, q) -> fprintf out
+      ) args
+  | If (b, p) -> fprintf out
       "@[<hov>if@ %a@ then@ %a@]"
       pp_boolean b
-      pp_proc q
+      pp_proc p
   | Sum (p1, p2) -> fprintf out "(%a +@ %a)"
       pp_proc p1
       pp_proc p2
@@ -81,3 +81,18 @@ let rec pp_proc out p = match p with
         ~pp_sep: (fun out () -> fprintf out ",@ ")
         Format.pp_print_string
       ) cl
+
+let rec pp_prog out pi = match pi with
+  | Proc (p) -> pp_proc out p
+  | Def (k, [], p, pi) -> fprintf out
+      "@[<hov>%s =@ %a;@ %a@]" k
+      pp_proc p
+      pp_prog pi
+  | Def (k, params, p, pi) -> fprintf out
+      "@[<hov>%s(%a) =@ %a;@ %a@]" k
+      Format.(pp_print_list
+        ~pp_sep: (fun out () -> fprintf out ",@ ")
+        Format.pp_print_string
+      ) params
+      pp_proc p
+      pp_prog pi
