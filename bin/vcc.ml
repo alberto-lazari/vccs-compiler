@@ -2,7 +2,7 @@ open Vcc_lib
 
 let parse_file file =
   try Main.parse_file file
-  with _ -> Format.printf "[%s]\n*error*\n" file
+  with _ -> Format.printf "[%s]\n[!] generic error\n%!" file
 
 let rec parse_files files = match files with
   | [] -> failwith "no input files"
@@ -11,6 +11,7 @@ let rec parse_files files = match files with
       parse_file file; print_endline "";
       parse_files files
 
+(* Discard $0 *)
 let files = match Array.to_list Sys.argv with
   | [] -> []
   | _ :: fs -> fs
