@@ -3,6 +3,6 @@ let parse_file file =
   let lexbuf = Lexing.from_channel c in
   let pi = Parser.prog Lexer.read lexbuf in
   close_in c;
-  Format.printf "[%s] %a@."
+  Format.printf "[%s]\n%a@."
     file
     Pretty_print.pp_prog pi
