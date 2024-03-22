@@ -38,7 +38,7 @@ rule read =
   | "and" { AND }
   | "or" { OR }
 
-  | '0' { NIL }
+  | 'O' { NIL }
   | "τ" { TAU }
   | '\'' { TICK }
   | '.' { POINT }
