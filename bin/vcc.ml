@@ -2,7 +2,9 @@ open Vcc_lib
 
 let parse_file file =
   try Main.parse_file file
-  with _ -> Format.printf "[%s]\n[!] generic error\n%!" file
+  with
+  | Sys_error err -> Printf.eprintf "[!!] %s\n" err
+  | _ -> Format.printf "[%s]\n[!!] syntax error\n%!" file
 
 let rec parse_files files = match files with
   | [] -> failwith "no input files"

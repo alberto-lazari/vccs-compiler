@@ -142,6 +142,7 @@ prog:
   | k = ID LPAREN RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
     Def (k, [], p, pi)
   }
+  (* This doesn't work with params approach and needs a specific case, don't know why *)
   | k = ID LPAREN x = ID RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
     Def (k, [x], p, pi)
   }
