@@ -24,7 +24,7 @@ type boolean =
   | Not of boolean
   | And of boolean * boolean
   | Or of boolean * boolean
-  | BoolBinop of bbop * boolean * boolean
+  | BoolBinop of bbop * expr * expr
 
 
 type act =

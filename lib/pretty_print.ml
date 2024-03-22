@@ -12,7 +12,7 @@ let pp_abop out op = match op with
 let rec pp_expr out e = match e with
   | Int n -> fprintf out "%d" n
   | Var x -> fprintf out "%s" x
-  | AritBinop (op, e1, e2) -> fprintf out "@[<hov>%a %a@ %a@]"
+  | AritBinop (op, e1, e2) -> fprintf out "@[<hov>(%a %a@ %a)@]"
       pp_expr e1
       pp_abop op
       pp_expr e2
@@ -30,16 +30,16 @@ let rec pp_boolean out b = match b with
   | False -> fprintf out "false"
   | Not b -> fprintf out "not (%a)"
       pp_boolean b
-  | And (b1, b2) -> fprintf out "%a and@ %a"
+  | And (b1, b2) -> fprintf out "(%a and@ %a)"
       pp_boolean b1
       pp_boolean b2
-  | Or (b1, b2) -> fprintf out "%a or@ %a"
+  | Or (b1, b2) -> fprintf out "(%a or@ %a)"
       pp_boolean b1
       pp_boolean b2
-  | BoolBinop (op, b1, b2) -> fprintf out "%a %a@ %a"
-      pp_boolean b1
+  | BoolBinop (op, e1, e2) -> fprintf out "(%a %a@ %a)"
+      pp_expr e1
       pp_bbop op
-      pp_boolean b2
+      pp_expr e2
 
 let pp_act out a = match a with
   | Tau -> fprintf out "τ"
@@ -48,7 +48,7 @@ let pp_act out a = match a with
       pp_expr e
 
 let rec pp_proc out p = match p with
-  | Nil -> fprintf out "O"
+  | Nil -> fprintf out "0"
   | Act (a, p) -> fprintf out "%a. %a"
       pp_act a
       pp_proc p

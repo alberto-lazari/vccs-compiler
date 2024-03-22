@@ -88,8 +88,8 @@ boolean:
   | NOT b = boolean { Not b }
   | b1 = boolean AND b2 = boolean { And (b1, b2) }
   | b1 = boolean OR b2 = boolean { Or (b1, b2) }
-  | b1 = boolean; op = bbop; b2 = boolean {
-    BoolBinop (op, b1, b2)
+  | e1 = expr; op = bbop; e2 = expr {
+    BoolBinop (op, e1, e2)
   }
 
 act:
