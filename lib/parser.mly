@@ -37,9 +37,6 @@ open Ast
 
 
 (* Association rules *)
-%nonassoc PIPE
-%right POINT
-
 %nonassoc THEN
 %left EQUALS
 %left NEQ
@@ -51,6 +48,8 @@ open Ast
 %left GEQ
 
 %left PLUS
+%left PIPE
+%right POINT
 
 
 %start <Ast.prog> prog
@@ -67,6 +66,8 @@ abop:
 expr:
   | LPAREN e = expr RPAREN { e }
   | n = INT { Int n }
+  (* NIL catches the representation of 0 before INT *)
+  | NIL { Int 0 }
   | x = ID { Var x }
   | e1 = expr; op = abop; e2 = expr {
     AritBinop (op, e1, e2)

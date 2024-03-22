@@ -6,7 +6,7 @@ let white = [' ' '\t' '\n']+
 let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['a'-'z' 'A'-'Z']
-let id = ['a'-'z' 'A'-'Z' '0'-'9' '_']+'\''?
+let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*'\''?
 
 rule read =
   parse
@@ -38,7 +38,7 @@ rule read =
   | "and" { AND }
   | "or" { OR }
 
-  | 'O' { NIL }
+  | '0' { NIL }
   | "τ" { TAU }
   | '\'' { TICK }
   | '.' { POINT }
