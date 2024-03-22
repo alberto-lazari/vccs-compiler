@@ -124,6 +124,7 @@ proc:
   | NIL { Nil }
   | a = act POINT p = proc { Act (a, p) }
   | k = ID { Const (k, []) }
+  | k = ID LPAREN RPAREN { Const (k, []) }
   | k = ID LPAREN exprs = args RPAREN {
     Const (k, exprs)
   }
@@ -136,6 +137,9 @@ proc:
 prog:
   | p = proc EOF { Proc p }
   | k = ID EQUALS p = proc SEMICOLON pi = prog EOF {
+    Def (k, [], p, pi)
+  }
+  | k = ID LPAREN RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
     Def (k, [], p, pi)
   }
   | k = ID LPAREN vars = params RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
