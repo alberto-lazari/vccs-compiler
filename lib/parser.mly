@@ -11,18 +11,15 @@ open Ast
 %token LBRACE RBRACE
 
 %token EQUALS NEQ
-%token LT GT
-%token LEQ GEQ
+%token LT GT LEQ GEQ
 
-%token PLUS MINUS
-%token TIMES SLASH
+%token PLUS MINUS TIMES SLASH
 %token MOD
-
 
 %token TRUE FALSE
 %token NOT AND OR
 
-%token NIL
+%token ZERO
 %token TAU
 %token TICK
 %token POINT
@@ -38,39 +35,41 @@ open Ast
 
 (* Association rules *)
 %nonassoc THEN
-%left EQUALS
-%left NEQ
-%left AND
-%left OR
-%left LT
-%left GT
-%left LEQ
-%left GEQ
+%left AND OR
 
-%left PLUS
+%left PLUS MINUS
 %left PIPE
-%right POINT
+%left POINT
+
+%left TIMES SLASH
+%left MOD
 
 
 %start <Ast.prog> prog
 %%
 
 (* Syntax *)
-abop:
+abop_sum:
   | PLUS { Add }
   | MINUS { Sub }
+abop_prod:
   | TIMES { Mult }
   | SLASH { Div }
-  | MOD { Mod }
 
 expr:
   | LPAREN e = expr RPAREN { e }
+  (* ZERO catches the representation of 0 before INT *)
+  | ZERO { Int 0 }
   | n = INT { Int n }
-  (* NIL catches the representation of 0 before INT *)
-  | NIL { Int 0 }
   | x = ID { Var x }
-  | e1 = expr; op = abop; e2 = expr {
+  | e1 = expr; op = abop_sum; e2 = expr %prec PLUS {
     AritBinop (op, e1, e2)
+  }
+  | e1 = expr; op = abop_prod; e2 = expr %prec TIMES {
+    AritBinop (op, e1, e2)
+  }
+  | e1 = expr MOD e2 = expr %prec MOD {
+    AritBinop (Mod, e1, e2)
   }
 
 bbop:
@@ -121,7 +120,7 @@ resL:
 
 proc:
   | LPAREN p = proc RPAREN { p }
-  | NIL { Nil }
+  | ZERO { Nil }
   | a = act POINT p = proc { Act (a, p) }
   | k = ID { Const (k, []) }
   | k = ID LPAREN RPAREN { Const (k, []) }
