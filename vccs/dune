@@ -1,5 +1,5 @@
 (library
- (name vcc_lib))
+ (name vccs))
 
 (menhir
  (modules parser))
