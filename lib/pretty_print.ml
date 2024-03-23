@@ -68,14 +68,14 @@ let rec pp_proc out p = match p with
   | Paral (p1, p2) -> fprintf out "@[<hov>(%a |@ %a)@]"
       pp_proc p1
       pp_proc p2
-  | Red (p, fl) -> fprintf out "@[<hov>(%a) [%a]@]"
+  | Red (p, fl) -> fprintf out "@[<hov>(%a[%a])@]"
       pp_proc p
       Format.(pp_print_list
         ~pp_sep: (fun out () -> fprintf out ",@ ")
         (fun out (a, b) ->
           fprintf out "%s/%s" a b)
       ) fl
-  | Res (p, cl) -> fprintf out "@[<hov>(%a) \\ {%a}@]"
+  | Res (p, cl) -> fprintf out "@[<hov>(%a \\ {%a})@]"
       pp_proc p
       Format.(pp_print_list
         ~pp_sep: (fun out () -> fprintf out ",@ ")

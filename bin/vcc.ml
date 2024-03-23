@@ -18,4 +18,4 @@ let files = match Array.to_list Sys.argv with
   | [] -> []
   | _ :: fs -> fs
 
-let _ = parse_files files
+let () = parse_files files

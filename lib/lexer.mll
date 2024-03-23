@@ -2,15 +2,22 @@
 open Parser
 }
 
-let white = [' ' '\t' '\n']+
+let blank = [' ' '\t' '\n']+
 let digit = ['0'-'9']
-let int = '-'? digit+
-let letter = ['a'-'z' 'A'-'Z']
-let id = ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*'\''?
+let integer = '-'? digit+
 
-rule read =
-  parse
-  | white { read lexbuf }
+let letter = ['a'-'z' 'A'-'Z']
+let alphanumeric = letter | digit
+let id = letter
+  (* Allow special symbols in the middle *)
+  (alphanumeric | ['_' '-'])*
+  (* Do not end with special symbols *)
+  alphanumeric?
+  (* Allow primes *)
+  '\''*
+
+rule read = parse
+  | blank+ { read lexbuf }
 
   | '(' { LPAREN }
   | ')' { RPAREN }
@@ -50,7 +57,7 @@ rule read =
   | ',' { COMMA }
   | ';' { SEMICOLON }
 
-  | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | integer { INT (int_of_string (Lexing.lexeme lexbuf)) }
   (* Has to be last, otherwise matches other keywords too *)
   | id { ID (Lexing.lexeme lexbuf) }
 

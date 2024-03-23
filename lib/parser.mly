@@ -39,6 +39,7 @@ open Ast
 %left PLUS MINUS
 %left PIPE
 %left POINT
+%left BACKSLASH
 
 %nonassoc THEN
 
