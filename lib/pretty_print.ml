@@ -28,7 +28,7 @@ let pp_bbop out op = match op with
 let rec pp_boolean out b = match b with
   | True -> fprintf out "true"
   | False -> fprintf out "false"
-  | Not b -> fprintf out "not (%a)"
+  | Not b -> fprintf out "not %a"
       pp_boolean b
   | And (b1, b2) -> fprintf out "(%a and@ %a)"
       pp_boolean b1

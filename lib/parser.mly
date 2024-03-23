@@ -34,12 +34,13 @@ open Ast
 
 
 (* Association rules *)
-%nonassoc THEN
 %left AND OR
 
 %left PLUS MINUS
 %left PIPE
 %left POINT
+
+%nonassoc THEN
 
 %left TIMES SLASH
 %left MOD
