@@ -26,10 +26,10 @@ let column lexbuf pos =
   let newline_pos = newline_before_pos pos - 1 in
   pos - newline_pos
 
-let get_entire_line_at_position lexbuf pos =
+let line_content lexbuf pos =
   let buffer_length = Bytes.length lexbuf.Lexing.lex_buffer in
   if buffer_length = 0 then
-    "" (* Return an empty string if the buffer is empty *)
+    ""
   else
     let rec find_line_start end_pos =
       if end_pos = 0 || Bytes.get lexbuf.Lexing.lex_buffer (end_pos - 1) = '\n' then
@@ -53,8 +53,8 @@ let report lexbuf =
   let pos = lexbuf.Lexing.lex_curr_p.Lexing.pos_cnum in
   let ln = line lexbuf pos in
   let col = column lexbuf pos in
-  let line = get_entire_line_at_position lexbuf pos in
-  let marker = String.make (col - 1) ' ' ^ "^" in
+  let marker = String.make (if col > 0 then col - 1 else 0) ' ' ^ "^" in
+  let line = line_content lexbuf pos in
   Format.sprintf "%s\n%s\n[!!] Syntax error at line %d col %d: unexpected token '%s'\n"
     line
     marker
