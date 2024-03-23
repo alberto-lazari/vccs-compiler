@@ -3,7 +3,7 @@ let parse lexbuf =
     Parser.prog Lexer.read lexbuf
   with
   | Parsing.Parse_error | Parser.Error | _ ->
-    Error.report lexbuf |> failwith
+    Syntax_error.report lexbuf |> failwith
 
 let parse_file file =
   let c = open_in file in

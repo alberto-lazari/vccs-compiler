@@ -1,4 +1,5 @@
 open Vccs
+open Vccs_encoder
 
 let rec iterate_files (f : string -> unit) (files : string list) = match files with
   | [] -> failwith "no input files"
@@ -20,7 +21,8 @@ let _print_parsed_file (file : string) =
   print_iterated_file Main.parse_file Pretty_print.pp_prog file
 
 let print_encoded_file (file : string) =
-  print_iterated_file Vccs_encoder.encode_file Ccs.Pretty_print.pp_prog file
+  try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
+  with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
 
 
 (* Discard $0 *)
