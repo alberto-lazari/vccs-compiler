@@ -1,11 +1,11 @@
 k in K
 a in A
 
-c ::= τ | a | 'a
-
-L ::= a | a, L
+act ::= τ | a | 'a
 
 f ::= a/a | a/a, f
+channels ::= a | a, channels
+L ::= a | {channels}
 
 P ::= 0
     | (P)
@@ -14,7 +14,7 @@ P ::= 0
     | P + P
     | P | P
     | P[f]
-    | P \ {L}
+    | P \ L
 
 π ::= P
     | k = P; π
