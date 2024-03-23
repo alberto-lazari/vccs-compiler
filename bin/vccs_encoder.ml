@@ -30,7 +30,9 @@ let rec encode_proc p = match p with
       end
   | V.Sum (p1, p2) -> Sum (encode_proc p1, encode_proc p2)
   | V.Paral (p1, p2) -> Paral (encode_proc p1, encode_proc p2)
+  (* TODO: Change with the actual behavior *)
   | V.Red (p, fs) -> Red (encode_proc p, fs)
+  (* TODO: Change with the actual behavior *)
   | V.Res (p, resL) -> Res (encode_proc p, resL)
 
 let rec encode_prog pi = match pi with
