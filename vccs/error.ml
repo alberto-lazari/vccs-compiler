@@ -15,7 +15,7 @@ let line lexbuf pos =
   let line = find_line 0 0 in
   line
 
-let column lexbuf pos =
+let rec column lexbuf pos =
   let pos = pos - 1 in
   let rec newline_before_pos pos =
     if pos = 0 || Bytes.get lexbuf.Lexing.lex_buffer pos = '\n' then
@@ -24,7 +24,11 @@ let column lexbuf pos =
       newline_before_pos (pos - 1) in
 
   let newline_pos = newline_before_pos pos - 1 in
-  pos - newline_pos
+  let col = pos - newline_pos in
+  if col = 0 then
+    column lexbuf (pos - 1) + 2
+  else
+    col
 
 let line_content lexbuf pos =
   let buffer_length = Bytes.length lexbuf.Lexing.lex_buffer in
