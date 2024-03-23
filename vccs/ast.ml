@@ -6,7 +6,7 @@ type abop =
   | Mod
 
 type expr =
-  | Int of int
+  | Num of int
   | Var of string
   | AritBinop of abop * expr * expr
 

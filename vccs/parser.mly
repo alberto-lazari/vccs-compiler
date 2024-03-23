@@ -1,16 +1,16 @@
 %{
-open Ast
+  open Ast
 %}
 
 (* Tokens *)
-%token <int> INT
+%token <int> NUM
 %token <string> ID
 
 %token LPAREN RPAREN
 %token LBRACK RBRACK
 %token LBRACE RBRACE
 
-%token EQUALS NEQ
+%token EQ NEQ
 %token LT GT LEQ GEQ
 
 %token PLUS MINUS TIMES SLASH
@@ -60,9 +60,9 @@ abop_prod:
 
 expr:
   | LPAREN e = expr RPAREN { e }
-  (* ZERO catches the representation of 0 before INT *)
-  | ZERO { Int 0 }
-  | n = INT { Int n }
+  (* ZERO catches the representation of 0 before NUM *)
+  | ZERO { Num 0 }
+  | n = NUM { Num n }
   | x = ID { Var x }
   | e1 = expr; op = abop_sum; e2 = expr %prec PLUS {
     AritBinop (op, e1, e2)
@@ -75,7 +75,7 @@ expr:
   }
 
 bbop:
-  | EQUALS { Eq }
+  | EQ { Eq }
   | NEQ { Neq }
   | LT { Lt }
   | GT { Gt }
@@ -137,16 +137,16 @@ proc:
 
 prog:
   | p = proc EOF { Proc p }
-  | k = ID EQUALS p = proc SEMICOLON pi = prog EOF {
+  | k = ID EQ p = proc SEMICOLON pi = prog EOF {
     Def (k, [], p, pi)
   }
-  | k = ID LPAREN RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
+  | k = ID LPAREN RPAREN EQ p = proc SEMICOLON pi = prog EOF {
     Def (k, [], p, pi)
   }
   (* This doesn't work with params approach and needs a specific case, don't know why *)
-  | k = ID LPAREN x = ID RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
+  | k = ID LPAREN x = ID RPAREN EQ p = proc SEMICOLON pi = prog EOF {
     Def (k, [x], p, pi)
   }
-  | k = ID LPAREN vars = params RPAREN EQUALS p = proc SEMICOLON pi = prog EOF {
+  | k = ID LPAREN vars = params RPAREN EQ p = proc SEMICOLON pi = prog EOF {
     Def (k, vars, p, pi)
   }

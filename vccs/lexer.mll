@@ -1,64 +1,65 @@
 {
-open Parser
+  open Parser
 }
 
-let blank = [' ' '\t' '\n']+
-let digit = ['0'-'9']
-let integer = '-'? digit+
+let blank    = [' ' '\t' '\n']+
+let digit    = ['0'-'9']
+let number   = digit+
 
-let letter = ['a'-'z' 'A'-'Z']
-let alphanumeric = letter | digit
-let id = letter
-  (* Allow special symbols in the middle *)
-  (alphanumeric | ['_' '-'])*
-  (* Do not end with special symbols *)
-  alphanumeric?
-  (* Allow primes *)
-  '\''*
+let letter   = ['a'-'z' 'A'-'Z']
+let alphanum = letter | digit
+let id       = letter
+               (* Allow special symbols in the middle *)
+               (alphanum | ['_' '-'])*
+               (* Do not end with special symbols *)
+               alphanum?
+               (* Allow primes *)
+               '\''*
 
 rule read = parse
-  | blank+ { read lexbuf }
+  | blank+  { read lexbuf }
 
-  | '(' { LPAREN }
-  | ')' { RPAREN }
-  | '[' { LBRACK }
-  | ']' { RBRACK }
-  | '{' { LBRACE }
-  | '}' { RBRACE }
+  | '('     { LPAREN }
+  | ')'     { RPAREN }
+  | '['     { LBRACK }
+  | ']'     { RBRACK }
+  | '{'     { LBRACE }
+  | '}'     { RBRACE }
 
-  | '=' { EQUALS }
-  | "≠" { NEQ }
-  | '<' { LT }
-  | '>' { GT }
-  | "≤" { LEQ }
-  | "≥" { GEQ }
+  | '='     { EQ }
+  | "≠"     { NEQ }
+  | '<'     { LT }
+  | '>'     { GT }
+  | "≤"     { LEQ }
+  | "≥"     { GEQ }
 
-  | '+' { PLUS }
-  | '-' { MINUS }
-  | '*' { TIMES }
-  | '/' { SLASH }
-  | "mod" { MOD }
+  | '+'     { PLUS }
+  | '-'     { MINUS }
+  | '*'     { TIMES }
+  | '/'     { SLASH }
+  | "mod"   { MOD }
 
-  | "true" { TRUE }
+  | "true"  { TRUE }
   | "false" { FALSE }
-  | "not" { NOT }
-  | "and" { AND }
-  | "or" { OR }
+  | "not"   { NOT }
+  | "and"   { AND }
+  | "or"    { OR }
 
-  | '0' { ZERO }
-  | "τ" { TAU }
-  | '\'' { TICK }
-  | '.' { POINT }
-  | "if" { IF }
-  | "then" { THEN }
-  | '|' { PIPE }
-  | '\\' { BACKSLASH }
+  | '0'     { ZERO }
+  | "τ"     { TAU }
+  | '\''    { TICK }
+  | '.'     { POINT }
+  | "if"    { IF }
+  | "then"  { THEN }
+  | '|'     { PIPE }
+  | '\\'    { BACKSLASH }
 
-  | ',' { COMMA }
-  | ';' { SEMICOLON }
+  | ','     { COMMA }
+  | ';'     { SEMICOLON }
 
-  | integer { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | number  { NUM (int_of_string (Lexing.lexeme lexbuf)) }
   (* Has to be last, otherwise matches other keywords too *)
-  | id { ID (Lexing.lexeme lexbuf) }
+  | id      { ID (Lexing.lexeme lexbuf) }
 
-  | eof { EOF }
+  | eof     { EOF }
+  | _       { Format.sprintf "Parsing error: %s" (Lexing.lexeme lexbuf) |> failwith }

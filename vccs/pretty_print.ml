@@ -10,7 +10,7 @@ let pp_abop out op = match op with
   | Mod -> fprintf out "mod"
 
 let rec pp_expr out e = match e with
-  | Int n -> fprintf out "%d" n
+  | Num n -> fprintf out "%d" n
   | Var x -> fprintf out "%s" x
   | AritBinop (op, e1, e2) -> fprintf out "@[<hov>(%a %a@ %a)@]"
       pp_expr e1
