@@ -62,4 +62,3 @@ rule read = parse
   | id      { ID (Lexing.lexeme lexbuf) }
 
   | eof     { EOF }
-  | _       { Format.sprintf "Parsing error: %s" (Lexing.lexeme lexbuf) |> failwith }

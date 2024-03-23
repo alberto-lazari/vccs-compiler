@@ -11,8 +11,8 @@ let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit)
   try Format.printf "[%s]@.%a@.%!" file
     pp (f file)
   with
-  | Sys_error err -> Printf.eprintf "[!!] %s\n" err
-  | _ -> Format.printf "[%s]\n[!!] syntax error\n%!" file
+  | Sys_error err -> Printf.eprintf "[!!] %s\n%!" err
+  | Failure e -> Printf.eprintf "[%s]\n%s%!" file e
 
 
 (* Prefix _ to suppress "unused variable" error *)
