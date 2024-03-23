@@ -83,7 +83,7 @@ let rec pp_proc out p = match p with
       ) cl
 
 let rec pp_prog out pi = match pi with
-  | Proc (p) -> pp_proc out p
+  | Proc p -> pp_proc out p
   | Def (k, [], p, pi) -> fprintf out
       "@[<hov>%s =@ %a;@ %a@]" k
       pp_proc p
