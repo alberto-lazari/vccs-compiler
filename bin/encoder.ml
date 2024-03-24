@@ -32,16 +32,16 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     | V.Tau -> Act (Tau, encode_proc nextP)
     | V.Input (ch, x) ->
         let rec input_expand domain = match domain with
-        | [] -> Nil
-        | n :: [] ->
-            let ch_n = Printf.sprintf "%s_%d" ch n in
-            Act (Input ch_n, encode_proc (substitute_proc_var x n nextP))
-        | n :: rest ->
-            let ch_n = Printf.sprintf "%s_%d" ch n in
-            Sum (
-              Act (Input ch_n, encode_proc (substitute_proc_var x n nextP)),
-              input_expand rest
-            )
+          | [] -> Nil
+          | n :: [] ->
+              let ch_n = Printf.sprintf "%s_%d" ch n in
+              Act (Input ch_n, encode_proc (substitute_proc_var x n nextP))
+          | n :: rest ->
+              let ch_n = Printf.sprintf "%s_%d" ch n in
+              Sum (
+                Act (Input ch_n, encode_proc (substitute_proc_var x n nextP)),
+                input_expand rest
+              )
         in
         input_expand domain
     | V.Output (ch, e) ->
@@ -51,14 +51,11 @@ module Encoder (Interval : sig val interval : int * int end) = struct
   and encode_proc p = match p with
     | V.Nil -> Nil
     | V.Act (a, p) -> encode_act a p
+    | V.Const (k, []) -> Const k
     | V.Const (k, args) ->
         let el = List.map (fun e -> eval_expr e |> string_of_int) args in
-        begin match el with
-        | [] -> Const k
-        | _ ->
-          let k_el = k ^ "_" ^ String.concat "," el in
-          Const k_el
-        end
+        let k_el = k ^ "_" ^ String.concat "," el in
+        Const k_el
     | V.If (b, p) -> if Eval.eval_boolean b
         then encode_proc p
         else Nil
@@ -73,7 +70,29 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     | V.Proc p -> Proc (encode_proc p)
     | V.Def (k, [], p, pi) -> Def (k, encode_proc p, encode_prog pi)
     (* TODO: Change with the actual behavior *)
-    | V.Def (k, _, p, pi) -> Def (k, encode_proc p, encode_prog pi)
+    | V.Def (k, params, p, pi) ->
+        let rec def_expand domain = begin
+          match domain with
+          | [] -> Proc Nil
+          | n :: [] ->
+              let k_vl = k ^ "_" ^ String.concat "," params in
+              let subP = List.fold_left
+                (fun acc x -> substitute_proc_var x n acc)
+                p
+                params
+              in
+              Def (k_vl, encode_proc subP, encode_prog pi)
+          | n :: rest ->
+              let k_vl = k ^ "_" ^ String.concat "," params in
+              let subP = List.fold_left
+                (fun acc x -> substitute_proc_var x n acc)
+                p
+                params
+              in
+              Def (k_vl, encode_proc subP, def_expand rest)
+        end
+      in
+      def_expand domain
 
   let encode_file file =
     let pi = Vccs.Main.parse_file file in
