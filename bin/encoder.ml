@@ -28,22 +28,22 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     else
       v
 
-  let rec encode_act a nextP =
-    let rec input_expand ch x domain = match domain with
-    | [] -> Nil
-    | n :: [] ->
-        let ch_n = Printf.sprintf "%s_%d" ch n in
-        Act (Input ch_n, encode_proc (substitute_proc_var x n nextP))
-    | n :: rest ->
-        let ch_n = Printf.sprintf "%s_%d" ch n in
-        Sum (
-          Act (Input ch_n, encode_proc (substitute_proc_var x n nextP)),
-          input_expand ch x rest
-        )
-    in
-    match a with
+  let rec encode_act a nextP = match a with
     | V.Tau -> Act (Tau, encode_proc nextP)
-    | V.Input (ch, x) -> input_expand ch x domain
+    | V.Input (ch, x) ->
+        let rec input_expand domain = match domain with
+        | [] -> Nil
+        | n :: [] ->
+            let ch_n = Printf.sprintf "%s_%d" ch n in
+            Act (Input ch_n, encode_proc (substitute_proc_var x n nextP))
+        | n :: rest ->
+            let ch_n = Printf.sprintf "%s_%d" ch n in
+            Sum (
+              Act (Input ch_n, encode_proc (substitute_proc_var x n nextP)),
+              input_expand rest
+            )
+        in
+        input_expand domain
     | V.Output (ch, e) ->
         let a = Output (ch ^ Printf.sprintf "_%d" (eval_expr e)) in
         Act (a, encode_proc nextP)
