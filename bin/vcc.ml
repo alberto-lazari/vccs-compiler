@@ -2,7 +2,7 @@ open Vccs
 open Encoder
 
 module Interval = struct
-  let interval = (0, 2)
+  let interval = (-1, 2)
 end
 open Encoder (Interval)
 

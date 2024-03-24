@@ -2,10 +2,21 @@ module Encoder (Interval : sig val interval : int * int end) = struct
   open Ccs.Ast
   module Eval = Vccs.Eval
   module V = Vccs.Ast
+  open Vccs.Substitution
 
   exception Eval_error of string
 
   let (min, max) = Interval.interval
+  let _domain =
+    let rec range ?(start=0) len =
+      if start >= len
+      then []
+      else start :: (range len ~start:(start+1))
+    in
+    range ~start:min max
+
+
+  (* Catch out of bounds errors on final values *)
   let eval_expr e =
     let v = Eval.eval_expr e in
     if v < min || v > max then
@@ -17,15 +28,16 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     else
       v
 
-  let encode_act a = match a with
-    | V.Tau -> Tau
-    (* TODO: Change with the actual behavior *)
-    | V.Input (ch, _) -> Input ch
-    | V.Output (ch, e) -> Output (ch ^ Printf.sprintf "_%d" (eval_expr e))
+  let rec encode_act a nextP = match a with
+    | V.Tau -> Act (Tau, encode_proc nextP)
+    | V.Input (ch, x) -> Act (Input ch, encode_proc (substitute_proc_var x (-1) nextP))
+    | V.Output (ch, e) ->
+        let a = Output (ch ^ Printf.sprintf "_%d" (eval_expr e)) in
+        Act (a, encode_proc nextP)
 
-  let rec encode_proc p = match p with
+  and encode_proc p = match p with
     | V.Nil -> Nil
-    | V.Act (a, p) -> Act (encode_act a, encode_proc p)
+    | V.Act (a, p) -> encode_act a p
     | V.Const (k, args) ->
         let el = List.map (fun e -> eval_expr e |> string_of_int) args in
         begin match el with

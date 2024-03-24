@@ -17,7 +17,10 @@ let rec eval_boolean b =
   let eval_bbop op e1 e2 = match op with
     | Eq -> eval_expr e1 = eval_expr e2
     | Neq -> eval_expr e1 != eval_expr e2
-    | _ -> true
+    | Lt -> eval_expr e1 < eval_expr e2
+    | Gt -> eval_expr e1 > eval_expr e2
+    | Leq -> eval_expr e1 <= eval_expr e2
+    | Geq -> eval_expr e1 >= eval_expr e2
   in
   match b with
   | True -> true
