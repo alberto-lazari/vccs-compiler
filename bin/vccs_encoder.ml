@@ -34,7 +34,8 @@ let rec encode_prog pi = match pi with
   | V.Def (k, _, p, pi) -> Def (k, encode_proc p, encode_prog pi)
 
 let encode_file file =
-  try Vccs.Main.parse_file file |> encode_prog
+  let pi = Vccs.Main.parse_file file in
+  try encode_prog pi
   with Failure msg ->
     let msg = Printf.sprintf "[!!] Evaluation error: %s\n" msg in
     Eval_error msg |> raise
