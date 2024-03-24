@@ -1,5 +1,10 @@
 open Vccs
-open Vccs_encoder
+open Encoder
+
+module Interval = struct
+  let interval = (0, 2)
+end
+open Encoder (Interval)
 
 let rec iterate_files (f : string -> unit) (files : string list) = match files with
   | [] -> failwith "no input files"

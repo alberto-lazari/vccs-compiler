@@ -1,27 +1,29 @@
 open Ast
 
-let rec eval_abop op e1 e2 = match op with
-  | Add -> eval_expr e1 + eval_expr e2
-  | Sub ->
-      let res = eval_expr e1 - eval_expr e2 in
-      if res < 0
-      then Format.sprintf "negative number evaluated" |> failwith
-      else res
-  | Mult -> eval_expr e1 * eval_expr e2
-  | Div -> eval_expr e1 / eval_expr e2
-  | Mod -> eval_expr e1 mod eval_expr e2
-
-and eval_expr e = match e with
+let rec eval_expr e =
+  let eval_abop op e1 e2 = match op with
+    | Add -> eval_expr e1 + eval_expr e2
+    | Sub ->
+        let res = eval_expr e1 - eval_expr e2 in
+        if res < 0
+        then Format.sprintf "negative number evaluated" |> failwith
+        else res
+    | Mult -> eval_expr e1 * eval_expr e2
+    | Div -> eval_expr e1 / eval_expr e2
+    | Mod -> eval_expr e1 mod eval_expr e2
+  in
+  match e with
   | Num n -> n
   | Var x -> Format.sprintf "unbound variable '%s'" x |> failwith
   | AritBinop (op, e1, e2) -> eval_abop op e1 e2
 
-let eval_bbop op e1 e2 = match op with
-  | Eq -> eval_expr e1 = eval_expr e2
-  | Neq -> eval_expr e1 != eval_expr e2
-  | _ -> true
-
-let rec eval_boolean b = match b with
+let rec eval_boolean b =
+  let eval_bbop op e1 e2 = match op with
+    | Eq -> eval_expr e1 = eval_expr e2
+    | Neq -> eval_expr e1 != eval_expr e2
+    | _ -> true
+  in
+  match b with
   | True -> true
   | False -> false
   | Not b -> not (eval_boolean b)
