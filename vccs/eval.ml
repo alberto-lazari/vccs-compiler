@@ -3,11 +3,7 @@ open Ast
 let rec eval_expr e =
   let eval_abop op e1 e2 = match op with
     | Add -> eval_expr e1 + eval_expr e2
-    | Sub ->
-        let res = eval_expr e1 - eval_expr e2 in
-        if res < 0
-        then Format.sprintf "negative number evaluated" |> failwith
-        else res
+    | Sub -> eval_expr e1 - eval_expr e2
     | Mult -> eval_expr e1 * eval_expr e2
     | Div -> eval_expr e1 / eval_expr e2
     | Mod -> eval_expr e1 mod eval_expr e2
