@@ -61,8 +61,16 @@ module Encoder (Interval : sig val interval : int * int end) = struct
         else Nil
     | V.Sum (p1, p2) -> Sum (encode_proc p1, encode_proc p2)
     | V.Paral (p1, p2) -> Paral (encode_proc p1, encode_proc p2)
-    (* TODO: Change with the actual behavior *)
-    | V.Red (p, fs) -> Red (encode_proc p, fs)
+    | V.Red (p, fs) ->
+        let rec fs_expand fs = match fs with
+          | [] -> []
+          | (a, b) :: rest -> List.map
+                (fun n -> (a ^ "_" ^ string_of_int n, b ^ "_" ^ string_of_int n))
+                domain
+              @
+              fs_expand rest
+        in
+       Red (encode_proc p, fs_expand fs)
     | V.Res (p, resL) ->
         let rec resL_expand l = match l with
           | [] -> []
