@@ -66,26 +66,27 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     (* TODO: Change with the actual behavior *)
     | V.Res (p, resL) -> Res (encode_proc p, resL)
 
-  let rec encode_prog pi =
+  let rec encode_prog ?(first=false) pi =
     let rec def_expand pi domain = begin
+      let sep = if first then "_" else "," in
       match pi with
       | V.Def (_, [], _, _) -> pi
       | V.Def (k, x :: [], p, next_pi) ->
           begin match domain with
           | [] -> V.Proc V.Nil
           | n :: [] -> substitute_prog_var x n
-              (V.Def (k ^ "_", [], p, next_pi))
+              (V.Def (k ^ sep, [], p, next_pi))
           | n :: rest ->
-              (V.Def (k ^ "_", [], p, def_expand pi rest)) |>
+              (V.Def (k ^ sep, [], p, def_expand pi rest)) |>
               substitute_prog_var x n
           end
       | V.Def (k, x :: params, p, next_pi) ->
           begin match domain with
           | [] -> V.Proc V.Nil
           | n :: [] -> substitute_prog_var x n
-              (V.Def (k ^ "_", params, p, next_pi))
+              (V.Def (k ^ sep, params, p, next_pi))
           | n :: rest ->
-              (V.Def (k ^ "_", params, p, def_expand pi rest)) |>
+              (V.Def (k ^ sep, params, p, def_expand pi rest)) |>
               substitute_prog_var x n
           end
       | pi -> pi
@@ -102,7 +103,7 @@ module Encoder (Interval : sig val interval : int * int end) = struct
 
   let encode_file file =
     let pi = Vccs.Main.parse_file file in
-    try encode_prog pi
+    try encode_prog ~first:true pi
     with Failure msg ->
       let msg = Printf.sprintf "[!!] Evaluation error: %s\n" msg in
       Eval_error msg |> raise
