@@ -66,33 +66,33 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     (* TODO: Change with the actual behavior *)
     | V.Res (p, resL) -> Res (encode_proc p, resL)
 
-  let rec encode_prog pi = match pi with
+  let rec encode_prog pi =
+    let rec def_expand pi domain = begin
+      match pi with
+      | V.Def (_, [], _, _) -> pi
+      | V.Def (k, x :: [], p, next_pi) ->
+          begin match domain with
+          | [] -> V.Proc V.Nil
+          | n :: [] -> substitute_prog_var x n
+              (V.Def (k ^ "_", [], p, next_pi))
+          | n :: rest ->
+              (V.Def (k ^ "_", [], p, def_expand pi rest)) |>
+              substitute_prog_var x n
+          end
+      | V.Def (k, x :: params, p, next_pi) ->
+          V.Def (k, x :: params, p, next_pi)
+      | pi -> pi
+    end
+    in match pi with
     | V.Proc p -> Proc (encode_proc p)
     | V.Def (k, [], p, pi) -> Def (k, encode_proc p, encode_prog pi)
     (* TODO: Change with the actual behavior *)
     | V.Def (k, params, p, pi) ->
-        let rec def_expand domain = begin
-          match domain with
-          | [] -> Proc Nil
-          | n :: [] ->
-              let k_vl = k ^ "_" ^ String.concat "," params in
-              let subP = List.fold_left
-                (fun acc x -> substitute_proc_var x n acc)
-                p
-                params
-              in
-              Def (k_vl, encode_proc subP, encode_prog pi)
-          | n :: rest ->
-              let k_vl = k ^ "_" ^ String.concat "," params in
-              let subP = List.fold_left
-                (fun acc x -> substitute_proc_var x n acc)
-                p
-                params
-              in
-              Def (k_vl, encode_proc subP, def_expand rest)
-        end
-      in
-      def_expand domain
+        let expanded_def = def_expand
+          (V.Def (k, params, p, pi))
+          domain
+        in
+        encode_prog expanded_def
 
   let encode_file file =
     let pi = Vccs.Main.parse_file file in
