@@ -41,8 +41,8 @@ let rec substitute_proc_var x v p = match p with
   | Red (p, fs) -> Red (substitute_proc_var x v p, fs)
   | Res (p, resL) -> Res (substitute_proc_var x v p, resL)
 
-let substitute_prog_var x v ?(sep="") pi = match pi with
+let substitute_prog_var x v pi = match pi with
   | Def (k, params, p, pi) ->
-      let k_n = k ^ (string_of_int v) ^ sep in
+      let k_n = k ^ (string_of_int v) in
       Def (k_n, params, substitute_proc_var x v p, pi)
   | pi -> pi

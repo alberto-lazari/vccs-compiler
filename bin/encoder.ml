@@ -80,13 +80,19 @@ module Encoder (Interval : sig val interval : int * int end) = struct
               substitute_prog_var x n
           end
       | V.Def (k, x :: params, p, next_pi) ->
-          V.Def (k, x :: params, p, next_pi)
+          begin match domain with
+          | [] -> V.Proc V.Nil
+          | n :: [] -> substitute_prog_var x n
+              (V.Def (k ^ "_", params, p, next_pi))
+          | n :: rest ->
+              (V.Def (k ^ "_", params, p, def_expand pi rest)) |>
+              substitute_prog_var x n
+          end
       | pi -> pi
     end
     in match pi with
     | V.Proc p -> Proc (encode_proc p)
     | V.Def (k, [], p, pi) -> Def (k, encode_proc p, encode_prog pi)
-    (* TODO: Change with the actual behavior *)
     | V.Def (k, params, p, pi) ->
         let expanded_def = def_expand
           (V.Def (k, params, p, pi))
