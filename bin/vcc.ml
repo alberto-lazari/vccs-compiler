@@ -36,7 +36,7 @@ let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit)
   try Format.printf "[%s]@.%a@.%!" file
     pp (f file)
   with
-  | Sys_error err -> Printf.eprintf "[!!] System error%s\n%!" err
+  | Sys_error err -> Printf.eprintf "[!!] System error: %s\n%!" err
   | Failure err -> Printf.eprintf "[%s]\n%s%!" file err
 
 
@@ -58,10 +58,18 @@ let compile (interval : int * int) (output : string) (input : string) =
     Ccs.Pretty_print.pp_prog (encode_file input);
     close_out out
   with
+  | Sys_error msg ->
+      Printf.eprintf "[!!] System error: %s\n" msg;
+      close_out out;
+      exit (1)
   | Eval_error msg ->
-    Printf.eprintf "%s" msg;
-    close_out out;
-    exit (1)
+      Printf.eprintf "%s" msg;
+      close_out out;
+      exit (1)
+  | Failure msg ->
+      Printf.eprintf "%s" msg;
+      close_out out;
+      exit (1)
 
 
 let () =
