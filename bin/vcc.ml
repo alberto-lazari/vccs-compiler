@@ -37,7 +37,7 @@ let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit)
     pp (f file)
   with
   | Sys_error err -> Printf.eprintf "[!!] System error%s\n%!" err
-  | Failure e -> Printf.eprintf "[%s]\n%s%!" file e
+  | Failure err -> Printf.eprintf "[%s]\n%s%!" file err
 
 
 let _print_parsed_file (file : string) =
@@ -49,21 +49,26 @@ let _print_encoded_file (interval : int * int) (file : string) =
   try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
   with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
 
-let compile (interval : int * int) =
+let compile (interval : int * int) (output : string) (input : string) =
   let module Interval = struct let interval = interval end in
   let open Encoder (Interval) in
-  try Format.printf "%a@."
-    Ccs.Pretty_print.pp_prog (encode_file !input_file)
-  with Eval_error msg ->
+  let out = open_out output in
+  let fmt = Format.formatter_of_out_channel out in
+  try Format.fprintf fmt "%a@."
+    Ccs.Pretty_print.pp_prog (encode_file input);
+    close_out out
+  with
+  | Eval_error msg ->
     Printf.eprintf "%s" msg;
+    close_out out;
     exit (1)
 
 
 let () =
   Arg.parse speclist anon_fun usage_msg;
-  let _output_file = if !output_file = ""
+  let output_file = if !output_file = ""
     then Str.replace_first
-      (Str.regexp {|\(.*\)\.vccs|}) {|\1.ccs|}
+      (Str.regexp {|.*/\([^/]*\)\.vccs|}) {|\1.ccs|}
       !input_file
     else !output_file
   in
@@ -71,4 +76,4 @@ let () =
     "%d..%d"
     (fun min max -> (min, max))
   in
-  compile interval
+  compile interval output_file !input_file
