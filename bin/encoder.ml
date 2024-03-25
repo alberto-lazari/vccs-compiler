@@ -63,8 +63,14 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     | V.Paral (p1, p2) -> Paral (encode_proc p1, encode_proc p2)
     (* TODO: Change with the actual behavior *)
     | V.Red (p, fs) -> Red (encode_proc p, fs)
-    (* TODO: Change with the actual behavior *)
-    | V.Res (p, resL) -> Res (encode_proc p, resL)
+    | V.Res (p, resL) ->
+        let rec resL_expand l = match l with
+          | [] -> []
+          | a :: acts -> List.map (fun n -> a ^ "_" ^ string_of_int n) domain
+              @
+              resL_expand acts
+        in
+        Res (encode_proc p, resL_expand resL)
 
   let rec encode_prog ?(first=false) pi =
     let rec def_expand pi domain = begin
