@@ -1,4 +1,4 @@
 (executable
  (name vcc)
  (public_name vcc)
- (libraries vccs ccs))
+ (libraries str vccs ccs))

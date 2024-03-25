@@ -13,21 +13,23 @@ let rec speclist =[
   ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set)");
   ("-o", Arg.Set_string output_file, "\t  output file name (default=input-file.ccs)");
   ("-help",
-    Unit (fun _ -> print_endline (Arg.usage_string speclist usage_msg); exit 0),
+    Unit (fun _ -> Printf.eprintf "%s"
+      (Arg.usage_string speclist usage_msg); exit 0),
     "  show this message");
   ("--help",
-    Unit (fun _ -> print_endline (Arg.usage_string speclist usage_msg); exit 0),
+    Unit (fun _ -> Printf.eprintf "%s"
+      (Arg.usage_string speclist usage_msg); exit 0),
     " show this message");
 ]
 
-let rec iterate_files (f : string -> unit) (files : string list) = match files with
+let rec _iterate_files (f : string -> unit) (files : string list) = match files with
   | [] | [""] ->
       Printf.eprintf "[!!] Error: no input files\n";
       exit (1)
   | [file] -> f file
   | file :: files ->
       f file; print_endline "";
-      iterate_files f files
+      _iterate_files f files
 
 let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit) (file : string) =
   try Format.printf "[%s]@.%a@.%!" file
@@ -41,15 +43,31 @@ let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit)
 let _print_parsed_file (file : string) =
   print_iterated_file Main.parse_file Pretty_print.pp_prog file
 
-let print_encoded_file (interval : int * int) (file : string) =
+let _print_encoded_file (interval : int * int) (file : string) =
   let module Interval = struct let interval = interval end in
   let open Encoder (Interval) in
-
   try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
   with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
+
+let compile (interval : int * int) =
+  let module Interval = struct let interval = interval end in
+  let open Encoder (Interval) in
+  try print_iterated_file encode_file Ccs.Pretty_print.pp_prog !input_file
+  with Eval_error msg ->
+    Printf.eprintf "%s\n" msg;
+    exit (1)
 
 
 let () =
   Arg.parse speclist anon_fun usage_msg;
-  let interval = Scanf.sscanf !interval_string "%d..%d" (fun min max -> (min, max)) in
-  iterate_files (print_encoded_file interval) [!input_file]
+  let _output_file = if !output_file = ""
+    then Str.replace_first
+      (Str.regexp {|\(.*\)\.vccs|}) {|\1.ccs|}
+      !input_file
+    else !output_file
+  in
+  let interval = Scanf.sscanf !interval_string
+    "%d..%d"
+    (fun min max -> (min, max))
+  in
+  compile interval
