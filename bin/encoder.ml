@@ -28,24 +28,27 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     else
       v
 
+  (* Convention: value 0 creates the pure CCS channel *)
+  let ch_n ch n = if n != 0
+    then Printf.sprintf "%s_%d" ch n
+    else ch
+
   let rec encode_act a nextP = match a with
     | V.Tau -> Act (Tau, encode_proc nextP)
     | V.Input (ch, x) ->
         let rec input_expand domain = match domain with
           | [] -> Nil
           | n :: [] ->
-              let ch_n = Printf.sprintf "%s_%d" ch n in
-              Act (Input ch_n, encode_proc (substitute_proc_var x n nextP))
+              Act (Input (ch_n ch n), encode_proc (substitute_proc_var x n nextP))
           | n :: rest ->
-              let ch_n = Printf.sprintf "%s_%d" ch n in
               Sum (
-                Act (Input ch_n, encode_proc (substitute_proc_var x n nextP)),
+                Act (Input (ch_n ch n), encode_proc (substitute_proc_var x n nextP)),
                 input_expand rest
               )
         in
         input_expand domain
     | V.Output (ch, e) ->
-        let a = Output (ch ^ Printf.sprintf "_%d" (eval_expr e)) in
+        let a = Output (ch_n ch (eval_expr e)) in
         Act (a, encode_proc nextP)
 
   and encode_proc p = match p with
@@ -65,7 +68,7 @@ module Encoder (Interval : sig val interval : int * int end) = struct
         let rec fs_expand fs = match fs with
           | [] -> []
           | (a, b) :: rest -> List.map
-                (fun n -> (a ^ "_" ^ string_of_int n, b ^ "_" ^ string_of_int n))
+                (fun n -> (ch_n a n, ch_n b n))
                 domain
               @
               fs_expand rest
@@ -74,7 +77,7 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     | V.Res (p, resL) ->
         let rec resL_expand l = match l with
           | [] -> []
-          | a :: acts -> List.map (fun n -> a ^ "_" ^ string_of_int n) domain
+          | a :: acts -> List.map (fun n -> ch_n a n) domain
               @
               resL_expand acts
         in
