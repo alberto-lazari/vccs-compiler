@@ -13,3 +13,16 @@ Once OPAM is installed you can install the package with
 # From the project directory
 opam install .
 ```
+
+## Usage
+Once installed you can compile a file `<file>.vccs` to `<file>.ccs` with
+```bash
+vcc <file>
+```
+
+You can set the value interval with
+```bash
+vcc -i <min>..<max> <file>
+```
+
+Use `-help` for more informations on usage
