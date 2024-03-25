@@ -49,27 +49,31 @@ let _print_encoded_file (interval : int * int) (file : string) =
   try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
   with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
 
-let compile (interval : int * int) (output : string) (input : string) =
-  let module Interval = struct let interval = interval end in
-  let open Encoder (Interval) in
-  let out = open_out output in
-  let fmt = Format.formatter_of_out_channel out in
-  try Format.fprintf fmt "%a@."
-    Ccs.Pretty_print.pp_prog (encode_file input);
-    close_out out
-  with
-  | Sys_error msg ->
-      Printf.eprintf "[!!] System error: %s\n" msg;
-      close_out out;
-      exit (1)
-  | Eval_error msg ->
-      Printf.eprintf "%s" msg;
-      close_out out;
-      exit (1)
-  | Failure msg ->
-      Printf.eprintf "%s" msg;
-      close_out out;
-      exit (1)
+let compile (interval : int * int) (output_file : string) (input_file : string) =
+  match input_file with
+    | "" -> Printf.eprintf "%s" (Arg.usage_string speclist usage_msg);
+        exit (1)
+    | input_file ->
+        let module Interval = struct let interval = interval end in
+        let open Encoder (Interval) in
+        let out = open_out output_file in
+        let fmt = Format.formatter_of_out_channel out in
+        try Format.fprintf fmt "%a@."
+          Ccs.Pretty_print.pp_prog (encode_file input_file);
+          close_out out
+        with
+        | Sys_error msg ->
+            Printf.eprintf "[!!] System error: %s\n" msg;
+            close_out out;
+            exit (1)
+        | Eval_error msg ->
+            Printf.eprintf "%s" msg;
+            close_out out;
+            exit (1)
+        | Failure msg ->
+            Printf.eprintf "%s" msg;
+            close_out out;
+            exit (1)
 
 
 let () =
