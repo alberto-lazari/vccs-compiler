@@ -8,10 +8,10 @@ It has been developed as a project for the "Languages for Concurrency and Distri
 ## Install
 You may first need to install the OCaml language, with the [OPAM](https://opam.ocaml.org/) package-manager
 
-Once OPAM is installed you can install the package with
+Once OPAM is installed you can install the package by cloning this repo and installing it with OPAM:
 ```bash
-# From the project directory
-opam install .
+git clone https://github.com/albertolazari/vccs-compiler
+( cd vccs-compiler; opam install . )
 ```
 
 ## Usage
