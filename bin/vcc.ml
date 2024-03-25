@@ -10,8 +10,8 @@ let anon_fun file =
   input_file := file
 
 let rec speclist =[
-  ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set)");
-  ("-o", Arg.Set_string output_file, "\t  output file name (default=input-file.ccs)");
+  ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..9})");
+  ("-o", Arg.Set_string output_file, "\t  output file (default = <input-file-name>.ccs)");
   ("-help",
     Unit (fun _ -> Printf.eprintf "%s"
       (Arg.usage_string speclist usage_msg); exit 0),
