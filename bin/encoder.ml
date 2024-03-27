@@ -25,8 +25,7 @@ module Encoder (Interval : sig val interval : int * int end) = struct
         v
       in
       Eval_error msg |> raise
-    else
-      v
+    else v
 
   let ch_n ch n = Printf.sprintf "%s_%d" ch n
 
