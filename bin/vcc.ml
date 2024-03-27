@@ -2,7 +2,7 @@ open Vccs
 open Encoder
 
 let usage_msg = "Usage: vcc [-i min..max] <input-file> [-o <output-file>]\nOptions:"
-let interval_string = ref "0..9"
+let interval_string = ref "0..15"
 let input_file = ref ""
 let output_file = ref ""
 
@@ -11,7 +11,7 @@ let anon_fun file =
 
 let rec speclist =[
   ("-", Arg.Unit (fun () -> input_file := "/dev/stdin"), "");
-  ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..9})");
+  ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..15})");
   ("-o", Arg.Set_string output_file, "\t  output file (default = <input-file-name>.ccs)");
   ("-help",
     Unit (fun _ -> Printf.eprintf "%s"
