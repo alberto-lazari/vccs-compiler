@@ -1,3 +1,4 @@
+(* Substitute an expression's free variable with a value *)
 open Ast
 
 let rec substitute_expr_var x v e = match e with
