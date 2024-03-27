@@ -1,7 +1,6 @@
-open Vccs
 open Encoder
 
-let usage_msg = "Usage: vcc [-i min..max] <input-file> [-o <output-file>]\nOptions:"
+let usage_msg = "Usage: vcc [-i min..max] <file> [-o <output-file>]\nArguments:\n  <file>  input file to compile\nOptions:"
 let interval_string = ref "0..15"
 let input_file = ref ""
 let output_file = ref ""
@@ -23,32 +22,6 @@ let rec speclist =[
       (Arg.usage_string speclist usage_msg); exit 0),
     " show this message");
 ]
-
-(* Prefix _ to suppress "unused variable" error *)
-let rec _iterate_files (f : string -> unit) (files : string list) = match files with
-  | [] | [""] ->
-      Printf.eprintf "[!!] Error: no input files\n";
-      exit (1)
-  | [file] -> f file
-  | file :: files ->
-      f file; print_endline "";
-      _iterate_files f files
-
-let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit) (file : string) =
-  try Format.printf "[%s]@.%a@.%!" file
-    pp (f file)
-  with
-  | Failure err -> Printf.eprintf "[%s]\n%s%!" file err
-
-
-let _print_parsed_file (file : string) =
-  print_iterated_file Main.parse_file Pretty_print.pp_prog file
-
-let _print_encoded_file (interval : int * int) (file : string) =
-  let module Interval = struct let interval = interval end in
-  let open Encoder (Interval) in
-  try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
-  with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
 
 let compile (interval : int * int) (output_file : string) (input_file : string) =
   let module Interval = struct let interval = interval end in
