@@ -59,7 +59,7 @@ let report lexbuf =
   let col = column lexbuf pos in
   let marker = String.make (if col > 0 then col - 1 else 0) ' ' ^ "^" in
   let line = line_content lexbuf pos in
-  Format.sprintf "%s\n%s\n[!!] Syntax error at line %d col %d: unexpected token '%s'\n"
+  Format.sprintf "%s\n%s\nSyntax error at line %d col %d: unexpected token '%s'\n"
     line
     marker
     ln col
