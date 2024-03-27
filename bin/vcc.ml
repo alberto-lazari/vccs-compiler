@@ -10,6 +10,7 @@ let anon_fun file =
   input_file := file
 
 let rec speclist =[
+  ("-", Arg.Unit (fun () -> input_file := "/dev/stdin"), "");
   ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..9})");
   ("-o", Arg.Set_string output_file, "\t  output file (default = <input-file-name>.ccs)");
   ("-help",
@@ -36,7 +37,6 @@ let print_iterated_file (f : string -> 'a) (pp : Format.formatter -> 'a -> unit)
   try Format.printf "[%s]@.%a@.%!" file
     pp (f file)
   with
-  | Sys_error err -> Printf.eprintf "[!!] System error: %s\n%!" err
   | Failure err -> Printf.eprintf "[%s]\n%s%!" file err
 
 
@@ -49,21 +49,7 @@ let _print_encoded_file (interval : int * int) (file : string) =
   try print_iterated_file encode_file Ccs.Pretty_print.pp_prog file
   with Eval_error msg -> Printf.eprintf "[%s]\n%s%!" file msg
 
-let test_input_file file = match file with
-  | "" ->
-      Printf.eprintf "Error: no input files\n%s" (Arg.usage_string speclist usage_msg);
-      exit (1)
-  | _ -> try match Sys.is_directory file with
-      | true ->
-          Printf.eprintf "Error: '%s' is a directory\n" file;
-          exit (1)
-      | false -> ()
-    with Sys_error _ ->
-      Printf.eprintf "Error: file '%s' does not exist\n" file;
-      exit (1)
-
 let compile (interval : int * int) (output_file : string) (input_file : string) =
-  test_input_file input_file;
   let module Interval = struct let interval = interval end in
   let open Encoder (Interval) in
   let out = open_out output_file in
@@ -84,7 +70,22 @@ let compile (interval : int * int) (output_file : string) (input_file : string) 
 
 let () =
   Arg.parse speclist anon_fun usage_msg;
-  let output_file = if !output_file = "" then
+  let input_file = match !input_file with
+  | "" ->
+      Printf.eprintf "Error: no input files\n%s" (Arg.usage_string speclist usage_msg);
+      exit (1)
+  | file -> try match Sys.is_directory file with
+      | true ->
+          Printf.eprintf "Error: '%s' is a directory\n" file;
+          exit (1)
+      | false -> file
+    with Sys_error _ ->
+      Printf.eprintf "Error: file '%s' does not exist\n" file;
+      exit (1)
+  in
+
+  let output_file = match !output_file with
+  | "" -> if input_file = "/dev/stdin" then "/dev/stdout" else
     [ (* Change extension to .ccs *)
       ( (Str.regexp {|\([^.]*\)\.?[^.]*$|}), {|\1.ccs|} );
       (* Keep basename *)
@@ -92,11 +93,12 @@ let () =
     ] |> List.fold_left
       (fun acc (pattern, replace) ->
         Str.replace_first pattern replace acc)
-      !input_file
-    else !output_file
+      input_file
+  | file -> file
   in
+
   let interval = Scanf.sscanf !interval_string
     "%d..%d"
     (fun min max -> (min, max))
   in
-  compile interval output_file !input_file
+  compile interval output_file input_file
