@@ -28,10 +28,7 @@ module Encoder (Interval : sig val interval : int * int end) = struct
     else
       v
 
-  (* Convention: value 0 creates the pure CCS channel *)
-  let ch_n ch n = if n != 0
-    then Printf.sprintf "%s_%d" ch n
-    else ch
+  let ch_n ch n = Printf.sprintf "%s_%d" ch n
 
   let rec encode_act a nextP = match a with
     | V.Tau -> Act (Tau, encode_proc nextP)
