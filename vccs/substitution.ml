@@ -23,13 +23,18 @@ let rec substitute_boolean_var x v b = match b with
       BoolBinop (op, substitute_expr_var e1, substitute_expr_var e2)
   | b -> b
 
-let substitute_act_var x v a = match a with
-  | Output (a, arg) -> Output (a, substitute_expr_var x v arg)
-  | a -> a
-
 let rec substitute_proc_var x v p = match p with
   | Nil -> Nil
-  | Act (a, p) -> Act (substitute_act_var x v a, substitute_proc_var x v p)
+  | Act (a, p) -> begin match a with
+      | Tau -> Act (Tau, substitute_proc_var x v p)
+      | Input (_, var) -> let nextP =
+          if var = x
+            (* Allow variable shadowing *)
+            then p
+            else substitute_proc_var x v p
+          in Act (a, nextP)
+      | Output (ch, arg) -> Act (Output (ch, substitute_expr_var x v arg), substitute_proc_var x v p)
+      end
   | Const (k, args) -> Const (k, List.map (substitute_expr_var x v) args)
   | If (b, p) -> If (substitute_boolean_var x v b, substitute_proc_var x v p)
   | Sum (p1, p2) ->
