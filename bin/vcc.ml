@@ -95,6 +95,7 @@ let () =
       (fun acc (pattern, replace) ->
         Str.replace_first pattern replace acc)
       input_file
+  | "-" -> "/dev/stdout"
   | file -> file
   in
 
