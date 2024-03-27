@@ -10,6 +10,7 @@ let anon_fun file =
   input_file := file
 
 let rec speclist =[
+  (* Pass '-' as file to read stdin *)
   ("-", Arg.Unit (fun () -> input_file := "/dev/stdin"), "");
   ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..15})");
   ("-o", Arg.Set_string output_file, "\t  output file (default = <input-file-name>.ccs)");
