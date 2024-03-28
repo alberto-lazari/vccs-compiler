@@ -21,11 +21,19 @@ b ::= true | false
 
 act ::= τ | a(x) | 'a(e)
 
-args ::= e | e, args
-params ::= x | x, params
-f ::= a/a | a/a, f
+args ::= ε
+       | e
+       | e, args
+params ::= ε
+         | x
+         | x, params
+f ::= ε
+    | a/a
+    | a/a, f
 channels ::= a | a, channels
-L ::= a | {channels}
+L ::= a
+    | {}
+    | {channels}
 
 P ::= 0
     | (P)

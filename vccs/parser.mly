@@ -118,6 +118,7 @@ redf:
   }
 resL:
   | a = ID { [a] }
+  | LBRACE RBRACE { [] }
   | LBRACE chs = channels RBRACE { chs }
 
 proc:
@@ -132,6 +133,7 @@ proc:
   | IF b = boolean THEN p = proc { If (b, p) }
   | p1 = proc PLUS p2 = proc { Sum (p1, p2) }
   | p1 = proc PIPE p2 = proc { Paral (p1, p2) }
+  | p = proc LBRACK RBRACK { p }
   | p = proc LBRACK f = redf RBRACK { Red (p, f) }
   | p = proc BACKSLASH l = resL { Res (p, l) }
 

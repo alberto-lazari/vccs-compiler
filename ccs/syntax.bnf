@@ -9,7 +9,7 @@ L ::= a | {channels}
 
 P ::= 0
     | (P)
-    | c. P
+    | act. P
     | k
     | P + P
     | P | P
