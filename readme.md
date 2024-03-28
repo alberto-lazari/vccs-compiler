@@ -1,5 +1,5 @@
 # vCCS compiler
-A compiler for the value-passing extension to Milner's Calculus of Communicating Systems (CCS)
+Value-passing Ccs Compiler (`vcc`) is a compiler for the value-passing extension to Milner's Calculus of Communicating Systems (CCS)
 
 It compiles vCCS (value-passing CCS) code into pure CCS source files
 
