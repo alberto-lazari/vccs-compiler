@@ -4,22 +4,20 @@ open Var_substitution
 let ch_n ch n = Printf.sprintf "%s_%d" ch n
 
 (*
-  (Unused) Expand input-bound variables for each value in domain:
+  Expand input-bound variables for each value in domain:
   let domain = {min..max}
 
   a(x). P(x) -> a_min. P(min) + a_min+1. P(min+1)  + ... + a_max. P(max)
 *)
-let rec expand_act_var domain a p = match a with
-  | Input (ch, x) ->
-      begin match domain with
-      | [] -> Nil
-      | n :: [] -> Act (Input (ch_n ch n, x), substitute_proc_var x n p)
-      | n :: rest -> Sum (
-          Act (Input (ch_n ch n, x), substitute_proc_var x n p),
-          expand_act_var rest a p
-        )
-      end
-  | a -> Act (a, p)
+let rec expand_input_var domain p input =
+  let (ch, x) = input in
+  let a n = Act
+    (Input (ch_n ch n, x), substitute_proc_var x n p)
+  in
+  match domain with
+  | [] -> Nil
+  | n :: [] -> a n
+  | n :: rest -> Sum (a n, expand_input_var rest p input)
 
 (*
   Expand redirected channels for each value in domain:
