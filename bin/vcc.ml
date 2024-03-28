@@ -8,19 +8,18 @@ let output_file = ref ""
 let anon_fun file =
   input_file := file
 
-let rec speclist =[
+let rec print_usage () =
+  Printf.eprintf "%s"
+    (Arg.usage_string speclist usage_msg);
+  exit 0
+
+and speclist =[
   (* Pass '-' as file to read stdin *)
   ("-", Arg.Unit (fun () -> input_file := "/dev/stdin"), "");
   ("-i", Arg.Set_string interval_string, "\t  values interval (ℕ set, default = {0..15})");
   ("-o", Arg.Set_string output_file, "\t  output file (default = <input-file-name>.ccs)");
-  ("-help",
-    Unit (fun _ -> Printf.eprintf "%s"
-      (Arg.usage_string speclist usage_msg); exit 0),
-    "  show this message");
-  ("--help",
-    Unit (fun _ -> Printf.eprintf "%s"
-      (Arg.usage_string speclist usage_msg); exit 0),
-    " show this message");
+  ("-help", Unit print_usage, "  show this message");
+  ("--help", Unit print_usage, " show this message");
 ]
 
 let compile (interval : int * int) (output_file : string) (input_file : string) =
@@ -32,11 +31,7 @@ let compile (interval : int * int) (output_file : string) (input_file : string) 
     Ccs.Pretty_print.pp_prog (encode_file input_file);
     close_out out
   with
-  | Eval_error msg ->
-      Printf.eprintf "%s" msg;
-      close_out out;
-      exit (1)
-  | Failure msg ->
+  | Eval_error msg | Failure msg ->
       Printf.eprintf "%s" msg;
       close_out out;
       exit (1)
