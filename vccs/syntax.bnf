@@ -24,9 +24,6 @@ act ::= τ | a(x) | 'a(e)
 args ::= ε
        | e
        | e, args
-params ::= ε
-         | x
-         | x, params
 f ::= ε
     | a/a
     | a/a, f
@@ -46,6 +43,9 @@ P ::= 0
     | P[f]
     | P \ L
 
+params ::= ε
+         | x
+         | x, params
 π ::= P
     | k = P; π
     | k(params) = P; π
