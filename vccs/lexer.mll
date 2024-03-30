@@ -16,6 +16,8 @@ let id       = letter
                (* Allow primes *)
                '\''*
 
+let tau      = "τ" | "tau"
+
 rule read = parse
   | blank+  { read lexbuf }
 
@@ -46,7 +48,7 @@ rule read = parse
   | "or"    { OR }
 
   | '0'     { ZERO }
-  | "τ"     { TAU }
+  | tau     { TAU }
   | '\''    { TICK }
   | '.'     { POINT }
   | "if"    { IF }
