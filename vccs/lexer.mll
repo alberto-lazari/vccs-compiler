@@ -16,7 +16,11 @@ let id       = letter
                (* Allow primes *)
                '\''*
 
+(* Unicode alternatives *)
 let tau      = "τ" | "tau"
+let neq      = "≠" | "!=" | "/="
+let leq      = "≤" | "<="
+let geq      = "≥" | ">="
 
 rule read = parse
   | blank+  { read lexbuf }
@@ -29,11 +33,11 @@ rule read = parse
   | '}'     { RBRACE }
 
   | '='     { EQ }
-  | "≠"     { NEQ }
+  | neq     { NEQ }
   | '<'     { LT }
   | '>'     { GT }
-  | "≤"     { LEQ }
-  | "≥"     { GEQ }
+  | leq     { LEQ }
+  | geq     { GEQ }
 
   | '+'     { PLUS }
   | '-'     { MINUS }
