@@ -1,7 +1,7 @@
 open Ast
 open Var_substitution
 
-let ch_n ch n = Printf.sprintf "%s_%d" ch n
+let ch_n ch ?(sep="_")  n = Printf.sprintf "%s%s%d" ch sep n
 
 (*
   Expand input-bound variables for each value in domain:
@@ -61,10 +61,11 @@ let rec expand_prog_var domain first pi =
   | Def (k, x :: params, p, next_pi) ->
       begin match domain with
       | [] -> Proc Nil
-      | n :: [] -> substitute_prog_var x n
-          (Def (k ^ sep, params, p, next_pi))
+      | n :: [] ->
+          let p = substitute_proc_var x n p in
+          Def (ch_n k ~sep:sep n, params, p, next_pi)
       | n :: rest ->
-          (Def (k ^ sep, params, p, expand_prog_var rest first pi)) |>
-          substitute_prog_var x n
+          let p = substitute_proc_var x n p in
+          Def (ch_n k ~sep:sep n, params, p, expand_prog_var rest first pi)
       end
   | pi -> pi
