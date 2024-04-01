@@ -49,7 +49,7 @@ end) = struct
     | V.Nil -> Nil
     | V.Act (a, p) -> begin match a with
         | V.Input (ch, x) ->
-            expand_input_var domain p (ch, x) |> encode_expanded_input p
+            expand_input domain p (ch, x) |> encode_expanded_input p
         | a -> Act (encode_act a, encode_proc p)
         end
     | V.Const (k, []) -> Const k
@@ -63,13 +63,13 @@ end) = struct
     | V.Sum (p1, p2) -> Sum (encode_proc p1, encode_proc p2)
     | V.Paral (p1, p2) -> Paral (encode_proc p1, encode_proc p2)
     | V.Red (p, fs) ->
-       Red (encode_proc p, expand_f_var domain fs)
-    | V.Res (p, resL) -> Res (encode_proc p, expand_resL_var domain resL)
+       Red (encode_proc p, expand_f domain fs)
+    | V.Res (p, resL) -> Res (encode_proc p, expand_resL domain resL)
 
   let rec encode_prog ?(first=false) pi = match pi with
     | V.Proc p -> Proc (encode_proc p)
     | V.Def (k, [], p, pi) -> Def (k, encode_proc p, encode_prog pi)
-    | pi -> expand_prog_var domain first pi |> encode_prog
+    | pi -> expand_prog domain first pi |> encode_prog
 
   let encode_file file =
     let pi = Vccs.Main.parse_file file in
