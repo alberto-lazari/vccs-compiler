@@ -57,7 +57,6 @@ let rec expand_resL domain l = match l with
 let rec expand_prog domain first pi =
   let sep = if first then "_" else "," in
   match pi with
-  | Def (_, [], _, _) -> pi
   | Def (k, x :: params, p, next_pi) ->
       begin match domain with
       | [] -> Proc Nil

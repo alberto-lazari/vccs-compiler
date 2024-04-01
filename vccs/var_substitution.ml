@@ -34,9 +34,7 @@ let rec sub_proc x v p = match p with
       end
   | Const (k, args) -> Const (k, List.map (sub_expr x v) args)
   | If (b, p) -> If (sub_boolean x v b, sub_proc x v p)
-  | Sum (p1, p2) ->
-      Sum (sub_proc x v p1, sub_proc x v p2)
-  | Paral (p1, p2) ->
-      Paral (sub_proc x v p1, sub_proc x v p2)
+  | Sum (p1, p2) -> Sum (sub_proc x v p1, sub_proc x v p2)
+  | Paral (p1, p2) -> Paral (sub_proc x v p1, sub_proc x v p2)
   | Red (p, fs) -> Red (sub_proc x v p, fs)
   | Res (p, resL) -> Res (sub_proc x v p, resL)
