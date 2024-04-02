@@ -3,7 +3,7 @@ module Encoder (Interval : sig
 end) = struct
   open Ccs.Ast
   module V = Vccs.Ast
-  open Vccs.Var_expansion
+  open Vccs.Expansion
 
   exception Eval_error of string
 
@@ -69,7 +69,7 @@ end) = struct
   let rec encode_prog ?(first=false) pi = match pi with
     | V.Proc p -> Proc (encode_proc p)
     | V.Def (k, [], p, pi) -> Def (k, encode_proc p, encode_prog pi)
-    | pi -> expand_prog domain first pi |> encode_prog
+    | pi -> expand_const_params domain first pi |> encode_prog
 
   let encode_file file =
     let pi = Vccs.Main.parse_file file in
