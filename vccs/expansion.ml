@@ -48,13 +48,13 @@ let rec expand_resL domain l = match l with
       expanded_ch @ (expand_resL domain acts)
 
 (*
-  Expand process definition parameters for each value in domain:
+  Expand process definition parameter for each value in domain:
   let domain = {min..max}
 
   P(x) = proc(x); pi ->
   P_min = proc(min); P_min+1 = proc(min+1); ...; P_max = proc(max); pi
 *)
-let rec expand_const_params domain first pi =
+let rec expand_const_param domain first pi =
   let sep = if first then "_" else "," in
   match pi with
   | Def (k, x :: params, p, next_pi) ->
@@ -65,6 +65,6 @@ let rec expand_const_params domain first pi =
           Def (ch_n k ~sep:sep n, params, p, next_pi)
       | n :: rest ->
           let p = sub_proc x n p in
-          Def (ch_n k ~sep:sep n, params, p, expand_const_params rest first pi)
+          Def (ch_n k ~sep:sep n, params, p, expand_const_param rest first pi)
       end
   | pi -> pi
