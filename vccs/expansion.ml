@@ -59,7 +59,7 @@ let rec expand_const_param domain first pi =
   match pi with
   | Def (k, x :: params, p, next_pi) ->
       begin match domain with
-      | [] -> Proc Nil
+      | [] -> next_pi
       | n :: [] ->
           let p = sub_proc x n p in
           Def (ch_n k ~sep:sep n, params, p, next_pi)
